@@ -1,13 +1,32 @@
-if (window.Worker) {
+let func = (i) => {
+    return i * 2 * 2;
+}
 
-    var myWorker = new Worker("worker.js"); // create a worker object 
-    var message = { addData: { num1: 1, num2: 5 } };
-    myWorker.postMessage('') // send message to worker
+myfunc()
 
-    myWorker.onmessage = function() {
-            console.log(1)
-        } // get the response from the worker
+async function myfunc() {
+    let res = await UseWorker(func, 1);
+    console.log(res)
+}
 
-} else {
-    alert("your browser do not support");
+// принимает колбек и аргументы 
+// возращает промис с результатом
+// использует воркер и считает колбек в другом потоке
+async function UseWorker(callback, ...args) {
+    if (window.Worker) {
+        var worker = new Worker("./worker.js");
+    } else {
+        alert("your browser do not support workers");
+    }
+    let str = callback.toString();
+    worker.postMessage({
+        callback: str,
+        args: args
+    })
+    return await new Promise(async(res, rej) => {
+        worker.addEventListener('message', (data) => {
+            res(data.data.res);
+            worker.terminate()
+        })
+    })
 }
