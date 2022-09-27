@@ -23,7 +23,7 @@ async function UseWorker(callback, ...args) {
         callback: str,
         args: args
     })
-    return await new Promise(async(res, rej) => {
+    return new Promise(async(res, rej) => {
         worker.addEventListener('message', (data) => {
             res(data.data.res);
             worker.terminate()
