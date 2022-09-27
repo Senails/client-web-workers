@@ -28,5 +28,11 @@ async function UseWorker(callback, ...args) {
             res(data.data.res);
             worker.terminate()
         })
+        worker.addEventListener('error', (error) => {
+            worker.terminate()
+            console.log('В воркере произошла ошибка!')
+            console.log(error)
+            rej('В воркере произошла ошибка!');
+        })
     })
 }
